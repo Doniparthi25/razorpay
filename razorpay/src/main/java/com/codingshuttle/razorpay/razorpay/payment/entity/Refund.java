@@ -3,6 +3,7 @@ package com.codingshuttle.razorpay.razorpay.payment.entity;
 import com.codingshuttle.razorpay.razorpay.common.entity.Money;
 import com.codingshuttle.razorpay.razorpay.common.enums.RefundStatus;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -12,6 +13,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "refund")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Refund {
 
     @Id
