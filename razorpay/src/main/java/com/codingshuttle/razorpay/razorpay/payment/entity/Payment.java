@@ -1,5 +1,6 @@
 package com.codingshuttle.razorpay.razorpay.payment.entity;
 
+import com.codingshuttle.razorpay.razorpay.common.entity.BaseEntity;
 import com.codingshuttle.razorpay.razorpay.common.entity.Money;
 import com.codingshuttle.razorpay.razorpay.common.enums.PaymentMethod;
 import com.codingshuttle.razorpay.razorpay.common.enums.PaymentStatus;
@@ -14,20 +15,23 @@ import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "payment", indexes = {
+        @Index(name = "idx_payment_order_id", columnList = "order_id"),
+        @Index(name = "idx_payment_merchant_id", columnList = "merchant_id")
+})
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Payment {
+public class Payment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_id:", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private OrderRecord order;
 
     @Column(nullable = false)
