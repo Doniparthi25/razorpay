@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -24,4 +25,14 @@ PaymentAdapter adapter = paymentAdapters.get(request.method());
 
    return adapter.initiate(request);
 }
+
+public PaymentResult capture(PaymentMethod method, UUID paymentId) {
+    PaymentAdapter adapter = paymentAdapters.get(method);
+    if (adapter == null) {
+        throw new IllegalArgumentException(("No payment adapter registered for method: "+method));
+    }
+
+    return adapter.capture(paymentId);
+}
+
 }
