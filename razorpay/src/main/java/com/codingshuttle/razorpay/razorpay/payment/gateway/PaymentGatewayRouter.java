@@ -14,6 +14,7 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class PaymentGatewayRouter {
+
 private final Map<PaymentMethod,PaymentAdapter> paymentAdapters;
 
 
