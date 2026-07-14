@@ -1,6 +1,8 @@
 package com.codingshuttle.razorpay.razorpay.payment.simulator;
 
+import com.codingshuttle.razorpay.razorpay.common.enums.ChaosMode;
 import com.codingshuttle.razorpay.razorpay.common.enums.PaymentStatus;
+import com.codingshuttle.razorpay.razorpay.common.util.RandomizerUtil;
 import com.codingshuttle.razorpay.razorpay.payment.entity.Payment;
 import com.codingshuttle.razorpay.razorpay.payment.repository.PaymentRepository;
 import com.codingshuttle.razorpay.razorpay.payment.service.PaymentService;
@@ -28,6 +30,8 @@ public class BankCallbackSimulator {
         List<Payment> candidates = paymentRepository
                 .findByStatusAndCreatedAtBefore(PaymentStatus.AUTHORIZING,globalWindow);
 
+        log.info("Simulating payments for {} payments", candidates.size());
+
         if (candidates.isEmpty()) return;
 
         for (Payment payment : candidates) {
@@ -37,7 +41,52 @@ public class BankCallbackSimulator {
     }
 
     public void simulateCallback(Payment payment) {
+        SimulatorConfig.MethodSimulatorConfig methodConfig = simulatorConfig.configFor(payment.getMethod());
 
+        LocalDateTime dueAt = dueAt(payment, methodConfig);
+
+        if (LocalDateTime.now().isBefore(dueAt)) {
+            return;
+        }
+
+        ChaosMode chaosMode = simulatorConfig.getChaosMode();
+
+        switch (chaosMode) {
+            case SUCCESS -> resolve(payment,true);
+            case FAILURE -> resolve(payment,false);
+            case TIMEOUT -> {
+                log.debug("BankCallback simulator: Payment Timed out");
+            }
+            case NORMAL, SLOW -> resolve(payment,shouldApprove(payment,methodConfig));
+        }
+    }
+
+    private void resolve(Payment payment, boolean approve) {
+        if (approve) {
+            String bankRef = "SIM_BANK_REF" + RandomizerUtil.randomBase64(8);
+            paymentService.resolveAuthorization(payment.getId(),true,bankRef,null,null);
+        }
+        else {
+            paymentService.resolveAuthorization(payment.getId(),false,null,"SIM_BANK_ERROR_CODE","Simulated Bank Decline");
+
+        }
+    }
+
+    public boolean shouldApprove(Payment payment, SimulatorConfig.MethodSimulatorConfig methodConfig) {
+        int bucket = Math.abs(payment.getId().hashCode()) % 100;
+        return bucket < methodConfig.getSeccessRate();
+    }
+
+    public LocalDateTime dueAt(Payment payment, SimulatorConfig.MethodSimulatorConfig methodConfig) {
+        int range = methodConfig.getMaxDelaySeconds() - methodConfig.getMinDelaySeconds();
+
+        int delaySeconds = methodConfig.getMinDelaySeconds() * Math.abs(payment.getId().hashCode()) % (range + 1);
+
+        if (simulatorConfig.getChaosMode() == ChaosMode.SLOW) {
+            delaySeconds *= 2;
+        }
+
+        return payment.getCreatedAt().plusSeconds(delaySeconds);
     }
 }
 

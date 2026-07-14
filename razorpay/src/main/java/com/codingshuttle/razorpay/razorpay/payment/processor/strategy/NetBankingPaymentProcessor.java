@@ -4,7 +4,9 @@ import com.codingshuttle.razorpay.razorpay.common.util.RandomizerUtil;
 import com.codingshuttle.razorpay.razorpay.payment.processor.PaymentProcessor;
 import com.codingshuttle.razorpay.razorpay.payment.processor.dto.PaymentProcessorRequest;
 import com.codingshuttle.razorpay.razorpay.payment.processor.dto.PaymentProcessorResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class NetBankingPaymentProcessor implements PaymentProcessor {
     @Override
     public PaymentProcessorResponse charge(PaymentProcessorRequest request) {
@@ -12,7 +14,7 @@ public class NetBankingPaymentProcessor implements PaymentProcessor {
         final String BANK_CODE_FAIL = "BANK_CODE_FAIL";
 
         String bankCode = request.methodDetails() !=null ?
-                request.methodDetails().get("BANK").toString() : null;
+                request.methodDetails().get("bank").toString() : null;
 
         if(BANK_CODE_FAIL.equals(bankCode)) {
             return new PaymentProcessorResponse.Failure("BANK_REJECTED",
