@@ -15,6 +15,7 @@ import com.codingshuttle.razorpay.razorpay.merchant.service.ApiKeyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     private final MerchantRepository merchantRepository;
     private final ApiKeyRepository apiKeyRepository;
     private final ApiKeyMapper apiKeyMapper;
+    private final BCryptPasswordEncoder BCRYPT = new BCryptPasswordEncoder();
 
 
     @Override
@@ -44,7 +46,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         ApiKey apiKey = ApiKey.builder()
                 .merchant(merchant)
                 .keyId(keyid)
-                .keySecretHash(rawSecret) //TODO encode with BcryptPasswordEncoder
+                .keySecretHash(BCRYPT.encode(rawSecret))
                 .environment(request.environment())
                 .build();
 
@@ -78,7 +80,7 @@ public class ApiKeyServiceImpl implements ApiKeyService {
         if (!apiKey.isEnabled()) throw new RuntimeException("Cannot rotate disabled key");
         String newRawSecret = RandomizerUtil.randomBase64(40);
         apiKey.setPreviousKeySecretHash(apiKey.getKeySecretHash());
-        apiKey.setKeySecretHash(newRawSecret); //TODO: encode with BcryptPasswordEncoder
+        apiKey.setKeySecretHash(BCRYPT.encode(newRawSecret)); //TODO: encode with BcryptPasswordEncoder
         apiKey.setRotatedAt(LocalDateTime.now());
         apiKey.setGracePeriodExpiresAt(LocalDateTime.now().plusHours(24));
         apiKey = apiKeyRepository.save(apiKey);
