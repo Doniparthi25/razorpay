@@ -6,6 +6,10 @@ spring:
       username: postgres
       password: Bhuv@n2002
       driver-class-name: org.postgresql.Driver
+  data:
+    url: ${REDIS_HOST:localhost}
+    username: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
   jpa:
         hibernate:
             ddl-auto: update
@@ -38,3 +42,10 @@ payment:
 
 jwt:
   secret-key: NqcfbJG1zkOfBsNF/wPmlLA7aaOvh9RCHTYYgY/9A2Q=
+
+app:
+  rate-limit:
+    method: fixed
+    use-case:
+      api-key:
+        requests-per-minute: 2
