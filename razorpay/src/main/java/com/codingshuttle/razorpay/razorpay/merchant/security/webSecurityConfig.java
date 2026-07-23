@@ -1,11 +1,12 @@
 package com.codingshuttle.razorpay.razorpay.merchant.security;
 
+import com.codingshuttle.razorpay.razorpay.common.idempotency.IdempotencyFilter;
+import com.codingshuttle.razorpay.razorpay.common.idempotency.IdempotencyStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,6 +25,7 @@ public class webSecurityConfig {
 
    private final JwtAuthenticationFilter jwtAuthenticationFilter;
    private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+   private final IdempotencyFilter idempotencyFilter;
 
     @Bean
     @Order(1)
@@ -38,6 +40,7 @@ public class webSecurityConfig {
                         .requestMatchers("/v1/auth/signup", "/v1/auth/login").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(idempotencyFilter, JwtAuthenticationFilter.class)
                 .build();
     }
 
@@ -52,6 +55,7 @@ public class webSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().authenticated())
                 .addFilterBefore(apiKeyAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(idempotencyFilter, ApiKeyAuthenticationFilter.class)
                 .build();
     }
 
