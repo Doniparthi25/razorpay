@@ -11,6 +11,7 @@ public record OrderResponse(
 
         UUID id,
         UUID merchantId,
+        UUID customerId,
         String receipt,
         Money amount,
         OrderStatus status,

@@ -74,6 +74,7 @@ public class VaultServiceImpl implements VaultService {
         return new TokenizeResponse(token,lastFour,cardBrand, request.expiryMonth(), request.expiryYear());
     }
 
+    @Transactional
     @Override
     public PaymentProcessorResponse charge(UUID paymentId, String token, Money amount, Map<String, Object> methodDetails) {
         CardToken cardToken = cardTokenRepository.findByTokenAndRevokedAtIsNull(token)

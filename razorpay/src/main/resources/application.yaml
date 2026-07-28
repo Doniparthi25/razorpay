@@ -7,12 +7,12 @@ spring:
       password: Bhuv@n2002
       driver-class-name: org.postgresql.Driver
   data:
-    url: ${REDIS_HOST:localhost}
-    username: ${REDIS_PORT:6379}
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
     password: ${REDIS_PASSWORD:}
   jpa:
         hibernate:
-            ddl-auto: update
+            ddl-auto: create-drop
         show-sql: true
         properties:
             hibernate:
