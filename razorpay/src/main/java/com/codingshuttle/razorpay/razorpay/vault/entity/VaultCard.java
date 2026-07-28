@@ -32,6 +32,7 @@ public class VaultCard {
     @Column(nullable = false)
     private byte[] encryptedDek;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CardBrand brand; // VISA, RUPAY
 
