@@ -24,7 +24,7 @@ public class VaultController {
     private final MerchantContext merchantContext;
     private final VaultService valutService;
 
-    @PostMapping
+    @PostMapping("/tokenize")
     public ResponseEntity<TokenizeResponse> tokenize(@Valid @RequestBody TokenizeRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(valutService.tokenize(request, merchantContext.getMerchantId()));

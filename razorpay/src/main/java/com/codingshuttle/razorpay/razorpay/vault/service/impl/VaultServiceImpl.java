@@ -34,7 +34,7 @@ public class VaultServiceImpl implements VaultService {
 
     private final CardTokenRepository cardTokenRepository;
     private final VaultCardRepository vaultCardRepository;
-    private BytesEncryptor dekEncrypter;
+    private final BytesEncryptor dekEncrypter;
     private final PaymentProcessorRouter paymentProcessorRouter;
 
 
