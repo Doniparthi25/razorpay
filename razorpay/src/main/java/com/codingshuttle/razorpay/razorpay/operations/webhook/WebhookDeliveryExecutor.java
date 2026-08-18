@@ -30,11 +30,11 @@ public class WebhookDeliveryExecutor {
     private final WebhookDlqRecorder webhookDlqRecorder;
 
     private static final List<Duration> BACKOFF = List.of(
-            Duration.ofMinutes(1),Duration.ofMinutes(5),Duration.ofMinutes(30),
-            Duration.ofHours(2),Duration.ofHours(24)
+            Duration.ofMinutes(1), Duration.ofMinutes(5), Duration.ofMinutes(30),
+            Duration.ofHours(2), Duration.ofHours(24), Duration.ofHours(48)
     );
 
-    private final int MAX_ATTEMPTS = 7;
+    private static final int MAX_ATTEMPTS = 7;
 
     @Value("${webhook.delivery.signature-header:X-Razorpay-Signature}")
     private String signatureHeader;

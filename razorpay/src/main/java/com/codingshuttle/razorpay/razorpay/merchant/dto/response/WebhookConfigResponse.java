@@ -8,7 +8,7 @@ import java.util.UUID;
 public record WebhookConfigResponse(
         UUID id,
         String targetUrl,
-        String wubhookSecret,
+        String webhookSecret,
         boolean enabled,
         String eventTypes
 ) {
