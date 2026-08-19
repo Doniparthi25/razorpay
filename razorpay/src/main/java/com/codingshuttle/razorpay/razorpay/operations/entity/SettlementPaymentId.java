@@ -1,11 +1,16 @@
 package com.codingshuttle.razorpay.razorpay.operations.entity;
 
 import jakarta.persistence.Embeddable;
-
+import lombok.*;
 import java.util.UUID;
 
 @Embeddable
-public class SettlemetPaymentId {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+public class SettlementPaymentId {
 
     private UUID settlementId;
 

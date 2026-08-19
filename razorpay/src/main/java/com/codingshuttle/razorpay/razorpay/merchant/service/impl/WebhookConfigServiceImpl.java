@@ -3,7 +3,7 @@ package com.codingshuttle.razorpay.razorpay.merchant.service.impl;
 import com.codingshuttle.razorpay.razorpay.common.dto.WebhookTarget;
 import com.codingshuttle.razorpay.razorpay.common.exceptions.ResourceNotFoundException;
 import com.codingshuttle.razorpay.razorpay.common.util.RandomizerUtil;
-import com.codingshuttle.razorpay.razorpay.merchant.api.MerchantWebhookApi;
+import com.codingshuttle.razorpay.razorpay.merchant.api.MerchantLookupService;
 import com.codingshuttle.razorpay.razorpay.merchant.dto.request.UpdateWebhookConfigRequest;
 import com.codingshuttle.razorpay.razorpay.merchant.dto.response.WebhookConfigResponse;
 import com.codingshuttle.razorpay.razorpay.merchant.entity.Merchant;
@@ -26,7 +26,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class WebhookConfigServiceImpl implements WebhookConfigService, MerchantWebhookApi {
+public class WebhookConfigServiceImpl implements WebhookConfigService {
 
     private final WebhookConfigRepository merchantWebhookConfigRepository;
     private final MerchantRepository merchantRepository;
@@ -94,15 +94,5 @@ public class WebhookConfigServiceImpl implements WebhookConfigService, MerchantW
                 .orElseThrow(() -> new ResourceNotFoundException("MerchantWebhookConfig", configId));
     }
 
-    @Override
-    public List<WebhookTarget> getActiveConfigsForEvent(UUID merchantId, String eventType) {
-        return merchantWebhookConfigRepository.findByMerchant_IdAndEnabledTrue(merchantId).stream()
-                .filter(config -> config.isSubscribedTo(eventType))
-                .map(config -> {
-                    byte[] cipherBytes = Base64.getDecoder().decode(config.getWebhookSecret());
-                    byte[] decryptedSecretBytes = bytesEncryptor.decrypt(cipherBytes);
-                    return new WebhookTarget(config.getId(), config.getTargetUrl(),
-                            new String(decryptedSecretBytes, StandardCharsets.UTF_8));
-                }).toList();
-    }
+
 }
