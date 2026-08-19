@@ -43,9 +43,9 @@ spring:
         spring.json.use.type.headers: false
         spring.json.value.default.type: java.util.LinkedHashMap
 
-threads:
-  virtual:
-    enabled: true
+  threads:
+    virtual:
+      enabled: true
 
 vault:
   master-key: h1P3M9L6Qv4L9Qx4Q5J8rD2YxJw1nV2wA0eL6u9iK7U=

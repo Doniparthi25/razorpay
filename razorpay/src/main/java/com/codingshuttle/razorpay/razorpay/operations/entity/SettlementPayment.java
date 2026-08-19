@@ -2,13 +2,19 @@ package com.codingshuttle.razorpay.razorpay.operations.entity;
 
 import com.codingshuttle.razorpay.razorpay.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "settlement_payment")
+@Builder
+@Getter
+@Setter
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class SettlementPayment extends BaseEntity {
 
     @EmbeddedId
-    private SettlemetPaymentId id;
+    private SettlementPaymentId id;
 
     @MapsId("settlementId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
